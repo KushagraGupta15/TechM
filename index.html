@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping Website</title>
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="product.js"></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-left">Venia</div>
+      <ul class="menu_list">
+        <li><a href="#" class="active">Home</a></li>
+        <li><a href="#">Women</a></li>
+        <li><a href="#">Men</a></li>
+        <li><a href="#">Smart Gear</a></li>
+        <li><a href="#">Accessories</a></li>
+      </ul>
+      <div class="header-right">
+        <img src="./images/cart-icon.png" alt="Cart" class="cart-icon" />
+      </div>
+    </header>
+
+    <section class="inner_banner">
+      <div class="banner_content">
+        <h2>Men's<br />Outerwear</h2>
+      </div>
+      <div class="banner_poster">
+        <img
+          src="https://6745bbfa330f675174cb99ee--illustrious-scone-0c7043.netlify.app/images/inner_banner.jpg"
+          alt="Banner"
+        />
+      </div>
+    </section>
+    
+    <section class="category_section">
+      <div class="inner_container">
+        <div class="wrapper_category_row">
+          <!-- Filter Column -->
+          <div class="filter_col">
+            <p>Clothing / Women's / Outerwear</p>
+            <br>
+            <h3>Filters</h3>
+            <p>--------------------------------</p>
+            <div class="filter_categories">
+              <h4>Categories</h4>
+              <div class="custom-checkbox">
+                <input type="checkbox" id="checkbox1" value="jewelry" />
+                <label for="checkbox1">Jewellery</label>
+              </div>
+              <div class="custom-checkbox">
+                <input type="checkbox" id="checkbox2" value="electronics" />
+                <label for="checkbox2">Electronics</label>
+              </div>
+              <div class="custom-checkbox">
+                <input type="checkbox" id="checkbox3" value="men's clothing" />
+                <label for="checkbox3">Men's Clothing</label>
+              </div>
+              <div class="custom-checkbox">
+                <input type="checkbox" id="checkbox4" value="women's clothing" />
+                <label for="checkbox4">Women's Clothing</label>
+              </div>
+            </div>
+            <h4>Price</h4>
+            <div class="price_wrapper">
+              <input
+                type="range"
+                min="1"
+                max="1000"
+                value="100"
+                step="10"
+                id="minPriceRange"
+              />
+              <input
+                type="range"
+                min="1"
+                max="1000"
+                value="1000"
+                step="10"
+                id="maxPriceRange"
+              />
+              <input
+                type="number"
+                min="1"
+                max="1000"
+                value="100"
+                id="minPrice"
+              />
+              <input
+                type="number"
+                min="1"
+                max="1000"
+                value="1000"
+                id="maxPrice"
+              />
+            </div>
+            <br>
+            <input type="text" id="searchInput" placeholder="Search products..." />
+          </div>
+          
+          <!-- Product List -->
+          <div class="product_row">
+            <div class="product_list" id="productList">
+              <div class="product_col">
+                <img
+                  src="https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg"
+                  alt="Backpack"
+                />
+                <p>Fjallraven Foldsack No. 1 Backpack</p>
+                <span>$109.95</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
