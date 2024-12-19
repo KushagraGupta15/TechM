@@ -1,79 +1,96 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const productListContainer = document.getElementById('productList');
-  const minPriceRange = document.getElementById('minPriceRange');
-  const maxPriceRange = document.getElementById('maxPriceRange');
-  const minPriceInput = document.getElementById('minPrice');
-  const maxPriceInput = document.getElementById('maxPrice');
-  const categoryNavItems = document.querySelectorAll('.category_nav li a');
-  const checkboxCategories = document.querySelectorAll('.custom-checkbox input[type="checkbox"]');
-  const searchInput = document.getElementById('searchInput');
+const apiUrl = 'https://fakestoreapi.com/products';
+const productsContainer = document.getElementById('products-container');
+const loadMoreBtn = document.getElementById('load-more-btn');
+const loadingShimmer = document.getElementById('loading-shimmer');
+let products = [];
+let displayedProducts = 0;
+let filteredProducts = [];
 
-  // Fetch product data from API
-  fetch('https://fakestoreapi.com/products')
-      .then(response => response.json())
-      .then(data => {
-          displayProducts(data);
-      })
-      .catch(error => console.error('Error fetching data:', error));
+function fetchProducts() {
+  loadingShimmer.style.display = 'block';
+  productsContainer.innerHTML = '';
 
-  function displayProducts(products) {
-      productListContainer.innerHTML = ''; // Clear current product list
-      products.forEach(product => {
-          const productCol = document.createElement('div');
-          productCol.classList.add('product_col');
-          productCol.innerHTML = `
-              <img src="${product.image}" alt="${product.title}" />
-              <p>${product.title}</p>
-              <span>$${product.price.toFixed(2)}</span>
-          `;
-          productListContainer.appendChild(productCol);
-      });
-  }
+  fetch(apiUrl)
+    .then((response) => response.json())
+    .then((data) => {
+      products = data;
+      filteredProducts = data;
+      displayProducts();
+      loadingShimmer.style.display = 'none';
+    })
+    .catch((error) => {
+      console.error('Error fetching products:', error);
+      loadingShimmer.style.display = 'none';
+    });
+}
 
-  // Filter functionality
-  minPriceRange.addEventListener('input', syncPriceInputs);
-  maxPriceRange.addEventListener('input', syncPriceInputs);
-  minPriceInput.addEventListener('input', syncPriceSliders);
-  maxPriceInput.addEventListener('input', syncPriceSliders);
-  checkboxCategories.forEach(checkbox => {
-      checkbox.addEventListener('change', filterProducts);
+function displayProducts() {
+  const productsToDisplay = filteredProducts.slice(
+    displayedProducts,
+    displayedProducts + 10
+  );
+  productsToDisplay.forEach((product) => {
+    const productCard = document.createElement('div');
+    productCard.classList.add('product-card');
+
+    productCard.innerHTML = `
+      <img src="${product.image}" alt="${product.title}" />
+      <h3>${product.title}</h3>
+      <p class="product-price">$${product.price}</p>
+    `;
+
+    productsContainer.appendChild(productCard);
   });
-  searchInput.addEventListener('input', filterProducts);
 
-  function syncPriceInputs() {
-      minPriceInput.value = minPriceRange.value;
-      maxPriceInput.value = maxPriceRange.value;
-      filterProducts();
+  displayedProducts += productsToDisplay.length;
+
+  if (displayedProducts >= filteredProducts.length) {
+    loadMoreBtn.disabled = true;
   }
+}
 
-  function syncPriceSliders() {
-      minPriceRange.value = minPriceInput.value;
-      maxPriceRange.value = maxPriceInput.value;
-      filterProducts();
-  }
+document
+  .getElementById('category-filter')
+  .addEventListener('change', function () {
+    const category = this.value;
+    filteredProducts = category
+      ? products.filter((product) => product.category === category)
+      : products;
+    displayedProducts = 0;
+    productsContainer.innerHTML = '';
+    displayProducts();
+  });
 
-  function filterProducts() {
-      const minPrice = parseInt(minPriceRange.value);
-      const maxPrice = parseInt(maxPriceRange.value);
-      const selectedCategories = Array.from(checkboxCategories)
-          .filter(checkbox => checkbox.checked)
-          .map(checkbox => checkbox.value);
-      const searchTerm = searchInput.value.toLowerCase();
-
-      fetch('https://fakestoreapi.com/products')
-          .then(response => response.json())
-          .then(data => {
-              let filteredProducts = data.filter(product => {
-                  const matchesPriceRange = product.price >= minPrice && product.price <= maxPrice;
-                  const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(product.category);
-                  const matchesSearchTerm = product.title.toLowerCase().includes(searchTerm);
-
-                  return matchesPriceRange && matchesCategory && matchesSearchTerm;
-              });
-              displayProducts(filteredProducts);
-          })
-          .catch(error => console.error('Error filtering data:', error));
-  }
-
-  filterProducts();
+document.getElementById('sort-by').addEventListener('change', function () {
+  const sortBy = this.value;
+  filteredProducts.sort((a, b) => {
+    if (sortBy === 'price') {
+      return a.price - b.price;
+    }
+    return a.title.localeCompare(b.title);
+  });
+  displayedProducts = 0;
+  productsContainer.innerHTML = '';
+  displayProducts();
 });
+
+
+document.getElementById('search-bar').addEventListener('input', function () {
+  const searchTerm = this.value.toLowerCase();
+  filteredProducts = products.filter(
+    (product) =>
+      product.title.toLowerCase().includes(searchTerm) ||
+      product.description.toLowerCase().includes(searchTerm)
+  );
+  displayedProducts = 0;
+  productsContainer.innerHTML = '';
+  displayProducts();
+});
+
+
+loadMoreBtn.addEventListener('click', function () {
+  displayProducts();
+});
+
+
+fetchProducts();
